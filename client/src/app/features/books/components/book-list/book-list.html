@@ -1,0 +1,115 @@
+@if (loading) {
+<p class="text-sm text-muted">Loading books...</p>
+} @else if (books.length === 0) {
+<div class="rounded-xl border border-dashed border-outline bg-surface-card p-10 text-center text-sm text-muted">
+    No books match your search.
+</div>
+} @else {
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+    @for (book of books; track book._id) {
+    <article class="overflow-hidden rounded-xl border border-outline bg-surface-card shadow-[0_4px_20px_rgba(26,82,118,0.04)] transition-shadow hover:shadow-[0_8px_30px_rgba(26,82,118,0.08)]">
+
+        <!-- Book Cover -->
+        @if (book.image) {
+        <div class="aspect-4/3 overflow-hidden bg-surface-inset">
+            <img [src]="book.image?.url" [alt]="book.title" class="h-full w-full object-cover" />
+        </div>
+        } @else {
+        <div class="flex aspect-4/3 items-center justify-center bg-surface-inset">
+            <span class="text-sm text-muted">
+                No cover
+            </span>
+        </div>
+        }
+
+        <div class="p-6">
+
+            <div class="flex items-start justify-between gap-3">
+                <h3 class="text-base font-bold text-on-surface">
+                    {{ book.title }}
+                </h3>
+
+                <span class="shrink-0 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-primary">
+                    {{ book.category }}
+                </span>
+            </div>
+
+            <p class="mt-1 text-sm text-muted">
+                {{ book.author }}
+            </p>
+
+            <div class="mt-4 grid grid-cols-2 divide-x divide-outline rounded-field bg-surface-inset px-4 py-3">
+
+                <div>
+                    <p class="text-xs text-muted">Price</p>
+
+                    <p class="text-sm font-bold text-primary">
+                        {{ book.price.toFixed(2) }} EGP
+                    </p>
+                </div>
+
+                <div class="pl-4">
+                    <p class="text-xs text-muted">Stock</p>
+
+                    <p class="text-sm font-bold text-primary">
+                        {{ book.stock }} units
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="mt-4 flex justify-end gap-4 border-t border-outline pt-3 text-sm">
+
+                <!-- Edit -->
+                <button type="button" [disabled]="deletingBookId === book._id" (click)="edit.emit(book)"
+                    class="flex items-center gap-1 text-on-surface hover:text-primary disabled:cursor-not-allowed disabled:opacity-50">
+
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" />
+
+                    </svg>
+
+                    Edit
+                </button>
+
+                <!-- Delete -->
+                <button type="button" [disabled]="deletingBookId === book._id" (click)="delete.emit(book)"
+                    class="flex items-center gap-1 text-error hover:text-error/80 disabled:cursor-not-allowed disabled:opacity-60">
+
+                    @if (deletingBookId === book._id) {
+
+                    <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 1-4 4H4Z" />
+
+                    </svg>
+
+                    Deleting...
+
+                    } @else {
+
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m14.74 9-.346 9m-4.788 0L9.26 9M9.5 9V6.5A1.5 1.5 0 0 1 11 5h2a1.5 1.5 0 0 1 1.5 1.5V9m-9 0h11" />
+
+                    </svg>
+
+                    Delete
+
+                    }
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </article>
+    }
+</div>
+}

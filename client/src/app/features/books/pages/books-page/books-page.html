@@ -1,0 +1,161 @@
+<section class="mx-auto flex h-full min-h-0 w-full max-w-7xl flex-1 flex-col px-6 py-10 md:px-12">
+
+    <div class="shrink-0">
+        <h1 class="text-3xl font-extrabold text-on-surface md:text-4xl">
+            Our Books
+        </h1>
+
+        <p class="mt-2 text-muted">
+            Browse our collection of books.
+        </p>
+
+        <div class="mt-6 flex items-center gap-3 rounded-xl border border-outline bg-surface-card px-5 py-3">
+
+            <button type="button" (click)="searchBooks()"
+                class="shrink-0 text-muted transition-colors hover:text-primary" aria-label="Search books">
+
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+
+                </svg>
+            </button>
+
+            <input type="text" [(ngModel)]="searchTerm" (keydown.enter)="searchBooks()"
+                placeholder="Search by title, author, or category..."
+                class="w-full bg-transparent text-sm text-on-surface placeholder:text-muted focus:outline-none" />
+
+            @if (searchTerm) {
+
+            <button type="button" (click)="clearSearch()" aria-label="Clear search"
+                class="shrink-0 text-muted transition-colors hover:text-primary">
+
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18" />
+
+                </svg>
+
+            </button>
+
+            }
+
+        </div>
+
+        @if (errorMessage()) {
+
+        <p class="mt-4 rounded-field bg-error/10 px-4 py-2 text-sm text-error">
+            {{ errorMessage() }}
+        </p>
+
+        }
+
+    </div>
+
+    @if (loading()) {
+
+    <div class="flex min-h-0 flex-1 items-center justify-center">
+        <p class="text-sm text-muted">
+            Loading books...
+        </p>
+    </div>
+
+    } @else if (!books().length) {
+
+    <div class="mt-8 flex min-h-0 flex-1 items-center justify-center">
+        <div
+            class="w-full rounded-card border border-dashed border-outline bg-surface-card p-10 text-center text-sm text-muted">
+            No books available.
+        </div>
+    </div>
+
+    } @else {
+
+    <div class="mt-8 flex min-h-0 flex-1 flex-col">
+
+        <!-- Books scroll area -->
+        <div class="min-h-0 flex-1 overflow-y-auto pr-2">
+
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+                @for (book of books(); track book._id) {
+
+                <article
+                    class="overflow-hidden rounded-xl border border-outline bg-surface-card shadow-[0_4px_20px_rgba(26,82,118,0.04)] transition-shadow hover:shadow-[0_8px_30px_rgba(26,82,118,0.08)]">
+
+                    @if (book.image) {
+                    <div class="aspect-4/3 overflow-hidden bg-surface-inset">
+                        <img [src]="book.image.url" [alt]="book.title" class="h-full w-full object-cover" />
+                    </div>
+                    } @else {
+                    <div class="flex aspect-4/3 items-center justify-center bg-surface-inset">
+                        <span class="text-sm text-muted">
+                            No cover
+                        </span>
+                    </div>
+                    }
+
+                    <div class="p-5">
+
+                        <div class="flex items-start justify-between gap-3">
+
+                            <h2 class="line-clamp-2 text-base font-bold text-on-surface">
+                                {{ book.title }}
+                            </h2>
+
+                            <span class="shrink-0 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-primary">
+                                {{ book.category }}
+                            </span>
+
+                        </div>
+
+                        <p class="mt-1 text-sm text-muted">
+                            {{ book.author }}
+                        </p>
+
+                        <div
+                            class="mt-4 grid grid-cols-2 divide-x divide-outline rounded-field bg-surface-inset px-4 py-3">
+
+                            <div>
+                                <p class="text-xs text-muted">
+                                    Price
+                                </p>
+
+                                <p class="text-sm font-bold text-primary">
+                                    {{ book.price.toFixed(2) }} EGP
+                                </p>
+                            </div>
+
+                            <div class="pl-4">
+                                <p class="text-xs text-muted">
+                                    Stock
+                                </p>
+
+                                <p class="text-sm font-bold text-primary">
+                                    {{ book.stock }} units
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                }
+
+            </div>
+
+        </div>
+
+        <!-- Pagination -->
+        <div class="shrink-0 pt-4">
+            <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalItems]="totalItems"
+                [pageSize]="pageSize" (pageChange)="goToPage($event)" />
+        </div>
+
+    </div>
+
+    }
+</section>

@@ -1,0 +1,250 @@
+<div class="rounded-xl bg-surface-card p-6 shadow-[0_4px_20px_rgba(26,82,118,0.04)]">
+    <div class="mb-5 flex items-center gap-2">
+        <svg class="h-6 w-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+
+        <h2 class="text-lg font-bold text-on-surface">
+            {{ isEditMode ? 'Edit Book' : 'Add New Book' }}
+        </h2>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+
+        <!-- Title -->
+        <div>
+            <label class="mb-1 block text-sm text-on-surface">Title</label>
+
+            <input type="text" formControlName="title" placeholder="e.g. Atomic Habits"
+                class="w-full rounded-field border border-outline px-3 py-2.5 text-sm text-on-surface placeholder:text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+
+            @if (submitted && form.controls.title.invalid) {
+            <p class="mt-1 text-xs text-error">
+                @if (form.controls.title.hasError('required')) {
+                Title is required.
+                } @else if (form.controls.title.hasError('maxlength')) {
+                Title must be 200 characters or less.
+                }
+            </p>
+            }
+
+            @if (serverErrors['title']) {
+            <p class="mt-1 text-xs text-error">
+                {{ serverErrors['title'] }}
+            </p>
+            }
+        </div>
+
+        <!-- Author -->
+        <div>
+            <label class="mb-1 block text-sm text-on-surface">Author</label>
+
+            <input type="text" formControlName="author" placeholder="e.g. James Clear"
+                class="w-full rounded-field border border-outline px-3 py-2.5 text-sm text-on-surface placeholder:text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+
+            @if (submitted && form.controls.author.invalid) {
+            <p class="mt-1 text-xs text-error">
+                @if (form.controls.author.hasError('required')) {
+                Author is required.
+                } @else if (form.controls.author.hasError('maxlength')) {
+                Author must be 200 characters or less.
+                }
+            </p>
+            }
+
+            @if (serverErrors['author']) {
+            <p class="mt-1 text-xs text-error">
+                {{ serverErrors['author'] }}
+            </p>
+            }
+        </div>
+
+        <!-- Category -->
+        <div>
+            <label class="mb-1 block text-sm text-on-surface">Category</label>
+
+            <input type="text" formControlName="category" placeholder="e.g. Self Development"
+                class="w-full rounded-field border border-outline px-3 py-2.5 text-sm text-on-surface placeholder:text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+
+            @if (submitted && form.controls.category.invalid) {
+            <p class="mt-1 text-xs text-error">
+                @if (form.controls.category.hasError('required')) {
+                Category is required.
+                } @else if (form.controls.category.hasError('maxlength')) {
+                Category must be 100 characters or less.
+                }
+            </p>
+            }
+
+            @if (serverErrors['category']) {
+            <p class="mt-1 text-xs text-error">
+                {{ serverErrors['category'] }}
+            </p>
+            }
+        </div>
+
+        <!-- Book Cover -->
+        <div>
+            <label class="mb-1 block text-sm text-on-surface">
+                Book Cover
+                @if (!isEditMode) {
+                <span class="text-error">*</span>
+                }
+            </label>
+
+            <input #imageInput type="file" accept="image/jpeg,image/png,image/webp" (change)="onImageSelected($event)"
+                class="hidden" />
+
+            @if (selectedImage) {
+            <div class="flex items-center gap-3 rounded-field border border-outline p-3">
+                <div
+                    class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-surface-inset">
+                    <span class="text-xs text-muted">
+                        IMG
+                    </span>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-on-surface">
+                        {{ selectedImage.name }}
+                    </p>
+
+                    <p class="mt-0.5 text-xs text-muted">
+                        {{ (selectedImage.size / 1024 / 1024).toFixed(2) }} MB
+                    </p>
+                </div>
+
+                <button type="button" (click)="selectedImage = null; imageInput.value = ''"
+                    class="shrink-0 text-sm font-medium text-error hover:underline">
+                    Remove
+                </button>
+            </div>
+            } @else {
+            <button type="button" (click)="imageInput.click()"
+                class="flex w-full items-center justify-center gap-2 rounded-field border border-dashed border-outline px-4 py-6 text-sm text-muted transition-colors hover:border-primary hover:text-primary">
+
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 16.5V6.75A2.25 2.25 0 0 1 5.25 4.5h13.5A2.25 2.25 0 0 1 21 6.75v9.75A2.25 2.25 0 0 1 18.75 18.75H5.25A2.25 2.25 0 0 1 3 16.5Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m3 15 4.5-4.5 3 3L14.25 9 21 15.75M15.75 7.5h.008" />
+                </svg>
+
+                Choose Cover Image
+            </button>
+
+            <p class="mt-1 text-xs text-muted">
+                JPEG, PNG, or WebP · Max 2MB
+            </p>
+            }
+
+            @if (!isEditMode && submitted && !selectedImage) {
+            <p class="mt-1 text-xs text-error">
+                Book cover image is required.
+            </p>
+            }
+        </div>
+
+        <!-- Price / Stock -->
+        <div class="grid grid-cols-2 gap-4">
+
+            <!-- Price -->
+            <div>
+                <label class="mb-1 block text-sm text-on-surface">
+                    Price (EGP)
+                </label>
+
+                <input type="number" placeholder="0" formControlName="price" min="0" step="0.01"
+                    class="w-full rounded-field border border-outline px-3 py-2.5 text-sm text-on-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+
+                @if (submitted && form.controls.price.invalid) {
+                <p class="mt-1 text-xs text-error">
+                    @if (form.controls.price.hasError('required')) {
+                    Price is required.
+                    } @else if (form.controls.price.hasError('min')) {
+                    Price cannot be negative.
+                    }
+                </p>
+                }
+
+                @if (serverErrors['price']) {
+                <p class="mt-1 text-xs text-error">
+                    {{ serverErrors['price'] }}
+                </p>
+                }
+            </div>
+
+            <!-- Stock -->
+            <div>
+                <label class="mb-1 block text-sm text-on-surface">
+                    Stock
+                </label>
+
+                <input type="number" placeholder="0" formControlName="stock" min="0" step="1"
+                    class="w-full rounded-field border border-outline px-3 py-2.5 text-sm text-on-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+
+                @if (submitted && form.controls.stock.invalid) {
+                <p class="mt-1 text-xs text-error">
+                    @if (form.controls.stock.hasError('required')) {
+                    Stock is required.
+                    } @else if (form.controls.stock.hasError('min')) {
+                    Stock cannot be negative.
+                    } @else if (form.controls.stock.hasError('pattern')) {
+                    Stock must be a whole number.
+                    }
+                </p>
+                }
+
+                @if (serverErrors['stock']) {
+                <p class="mt-1 text-xs text-error">
+                    {{ serverErrors['stock'] }}
+                </p>
+                }
+            </div>
+
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" [disabled]="saving"
+            class="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60">
+
+            @if (saving) {
+            <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+
+            {{ isEditMode ? 'Saving...' : 'Adding...' }}
+
+            } @else {
+
+            @if (isEditMode) {
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M16.862 4.487a2.25 2.25 0 0 1 3.182 3.182L8.25 19.463 4.5 20.5l1.037-3.75L16.862 4.487Z" />
+            </svg>
+
+            Save Changes
+
+            } @else {
+
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+
+            Add Book
+            }
+            }
+        </button>
+
+        <!-- Cancel Edit -->
+        @if (isEditMode) {
+        <button type="button" [disabled]="saving" (click)="cancel.emit()"
+            class="w-full rounded-full border border-outline py-2.5 text-sm font-medium text-muted transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-60">
+            Cancel
+        </button>
+        }
+
+    </form>
+</div>

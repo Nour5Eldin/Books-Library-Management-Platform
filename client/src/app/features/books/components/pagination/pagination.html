@@ -1,0 +1,41 @@
+@if (totalItems > 0) {
+<div class="mt-8 flex w-full flex-col items-center gap-4">
+
+    <nav class="flex items-center gap-1.5" aria-label="Pagination">
+
+        <!-- Previous -->
+        <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+            aria-label="Previous page"
+            class="flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-inset hover:text-primary disabled:pointer-events-none disabled:opacity-40">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6" />
+            </svg>
+        </button>
+
+        <!-- Page Numbers -->
+        @for (page of pages; track page) {
+        <button type="button" (click)="goToPage(page)" [attr.aria-current]="currentPage === page ? 'page' : null"
+            class="flex h-8 min-w-8 items-center justify-center rounded-md px-2 text-sm font-medium transition-colors"
+            [class.bg-primary]="currentPage === page" [class.text-white]="currentPage === page"
+            [class.text-on-surface]="currentPage !== page" [class.hover:bg-surface-inset]="currentPage !== page">
+            {{ page }}
+        </button>
+        }
+
+        <!-- Next -->
+        <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+            aria-label="Next page"
+            class="flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-inset hover:text-primary disabled:pointer-events-none disabled:opacity-40">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m9 18 6-6-6-6" />
+            </svg>
+        </button>
+
+    </nav>
+
+    <p class="text-sm text-muted">
+        Showing {{ startItem }}–{{ endItem }} of {{ totalItems }} books
+    </p>
+
+</div>
+}
