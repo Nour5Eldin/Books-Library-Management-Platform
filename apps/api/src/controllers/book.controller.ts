@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { Book } from '../models/book.model';
 import { createBookSchema, updateBookSchema } from '../validators/book.validator';
 import { deleteBookCover, uploadBookCover } from '../services/storage.service';
-import path from 'path/win32';
+import path from 'path';
 
 export const getBooks = async (
     req: Request, res: Response

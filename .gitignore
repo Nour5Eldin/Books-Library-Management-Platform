@@ -5,11 +5,15 @@ node_modules/
 .env
 .env.*
 
-# Angular build
-client/dist/
+# Build output
+apps/*/dist/
+packages/*/dist/
 
-# Server build
-server/dist/
+# Vercel
+.vercel/
+
+# Turborepo cache
+.turbo/
 
 # Logs
 *.log

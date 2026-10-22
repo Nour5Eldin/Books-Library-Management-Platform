@@ -1,5 +1,61 @@
 # BookNest
 
+## Monorepo and Vercel deployment
+
+The repository is an npm-workspaces monorepo orchestrated by Turborepo:
+
+```text
+apps/
+  web/             Angular SPA
+  api/             Express application and local server
+packages/
+  shared/          shared Zod validation package
+api/[...path].ts   Vercel serverless adapter
+```
+
+The detailed project notes below were written before this migration. Where an
+older path is mentioned, use this mapping:
+
+| Previous path | Current path |
+| --- | --- |
+| `client/` | `apps/web/` |
+| `server/` | `apps/api/` |
+| `shared/` | `packages/shared/` |
+| `client/dist/client` | `apps/web/dist/client/browser` |
+| `server/dist` | `apps/api/dist` |
+| `server/.env` | `apps/api/.env` for local API development |
+
+Run every application locally with one command:
+
+```bash
+npm install
+npm run dev
+```
+
+Build every workspace in dependency order with one command:
+
+```bash
+npm run build
+```
+
+### Deploy as one Vercel project
+
+Import the repository in Vercel and leave the project root at the repository root. Vercel reads `vercel.json`, runs `npm run vercel-build`, publishes the Angular SPA, and deploys `api/[...path].ts` as the Express API function. Both are available from one origin; the frontend calls `/api`, so no production API URL needs to be changed.
+
+Set these Environment Variables in Vercel for **Production**, **Preview**, and **Development** as appropriate (copy the variable names from `.env.example`):
+
+```text
+MONGODB_URI
+SUPABASE_URL
+SUPABASE_SECRET_KEY
+```
+
+Do not add the `.env` file or Supabase secret to Git.
+
+### Custom domain
+
+In Vercel, open the project, then **Settings → Domains → Add Domain**. Add both `example.com` and `www.example.com`, set the preferred one as primary, and apply the exact DNS records Vercel displays at your domain registrar. Vercel issues and renews the TLS certificate after DNS verification. No code or environment change is required because the frontend and API share the domain (`https://example.com/api/books`).
+
 BookNest is a full-stack library management application built with Angular, Node.js, Express, TypeScript, MongoDB, and Supabase Storage.
 
 The application allows users to browse the available books and provides a dedicated management interface for creating, editing, searching, and deleting books.
