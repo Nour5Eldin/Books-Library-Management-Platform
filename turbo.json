@@ -1,5 +1,10 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "MONGODB_URI",
+    "SUPABASE_URL",
+    "SUPABASE_SECRET_KEY"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
